@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
 
 class SqList:
     def __init__(self):
@@ -40,10 +38,3 @@ print('插入后的顺序表：\n',list_1.ListInsert())
 print('删除后的顺序表：\n',list_1.ListDelete())
 print("该顺序表的内容为:",list_1.content())
 print("该顺序表的长度为:",list_1.length())
-
-
-# In[ ]:
-
-
-
-
