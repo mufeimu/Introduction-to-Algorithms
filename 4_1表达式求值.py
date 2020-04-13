@@ -122,4 +122,3 @@ if __name__=='__main__':
     result=calculate(string,OPND,OPTR)
     print('最终计算结果为：',result)
     print('最终操作数栈的结果：',OPND.content())
-    
