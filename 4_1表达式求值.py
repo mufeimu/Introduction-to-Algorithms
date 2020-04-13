@@ -1,5 +1,5 @@
 """
-详细解析版
+表达式求值问题
 """
 class SStack(object):
     #初始化栈为空列表
@@ -62,81 +62,64 @@ def Operate(a,theta,b):
         return a - b
     elif theta == "*":
         return a * b
-    elif theta=="^":
-        return a**b
     else:  
         return a / b
+#定义求值函数
+def calculate(string,stack1,stack2):            #stack1为操作数栈的形参  stack2为操作符的形参
+    for i in string:
+        if i.isdigit():
+            i=int(i)
+            stack1.push(int(i))                #将数字压入操作数栈。
+        elif i.isdigit()==False and i!='#':
+            f=Precede(stack2.peek(),i)
+            if f=='<':
+                stack2.push(i)                 #新遍历的操作符优先级比操作符栈顶元素高，将其压入操作符栈。
+            elif f=='=':
+                stack2.pop()                   #新遍历的操作符优先级与操作符栈顶元素相等，去除操作符栈顶元素。
+            elif f=='>':                      #新遍历的操作符优先级与操作符栈顶元素低，，，，
+                b=stack1.pop()                #取操作数前两个元素与操作符栈顶元素进行相应运算。
+                a=stack1.pop()
+                theta=stack2.pop()
+                r1=Operate(a,theta,b)        
+                stack1.push(r1)               #将得到的结果值压入操作数栈。
+                c=stack2.peek()               
+                f1=Precede(c,i)              #继续将该新遍历的操作符与当前操作符栈顶元素比较优先级
+                if f1=='<':
+                    stack2.push(i)
+                elif f1=='=':
+                    stack2.pop()
+                elif f1=='>':
+                    b=stack1.pop()                #取操作数前两个元素与操作符栈顶元素进行相应运算。
+                    a=stack1.pop()
+                    theta=stack2.pop()
+                    r1=Operate(a,theta,b)        
+                    stack1.push(r1) 
+                    f2=Precede(OPTR.peek(),i)              #继续将该新遍历的操作符与当前操作符栈顶元素比较优先级
+                    if f2=='<':
+                        stack2.push(i)
+                    elif f2=='=':
+                        stack2.pop()
+                    elif f2=='>':
+                        b=stack1.pop()                #取操作数前两个元素与操作符栈顶元素进行相应运算。
+                        a=stack1.pop()
+                        theta=stack2.pop()
+                        r2=Operate(a,theta,b)        
+                        stack1.push(r2) 
+        elif i=='#':
+            while stack2.peek()!='#':
+                b=stack1.pop()
+                a=stack1.pop()
+                theta=stack2.pop()
+                r=Operate(a,theta,b)
+                stack1.push(r)
+            return r
 
 if __name__=='__main__':
     OPTR=SStack()   #存运算符栈
     OPTR.push('#')
     OPND=SStack()   #存操作数栈
-    string=input('请输入要计算的表达式:')   #3*(7-2)#
-    for i in string:
-        print('操作的符号或数字',i)
-        if i.isdigit():
-            i=int(i)
-            print('进栈的操作数:',i)
-            OPND.push(int(i))
-        elif i.isdigit()==False and i!='#':
-            f=Precede(OPTR.peek(),i)
-            if f=='<':
-                print('进栈的操作符<:',i)
-                OPTR.push(i)
-            elif f=='=':
-                print('弹出栈的操作符=:',i)
-                OPTR.pop()
-            elif f=='>':
-                print('f>i的操作符:',i)
-                b=OPND.pop()
-                a=OPND.pop()
-                theta=OPTR.pop()
-                print("a,b,thata:",a,b,theta)
-                r1=Operate(a,theta,b)
-                print('r1=',r1)
-                OPND.push(r1)       
-                c=OPTR.peek()
-                f1=Precede(c,i)
-                if f1=='<':
-                    print('进栈的操作符<:',i)
-                    OPTR.push(i)
-                elif f1=='=':
-                    OPTR.pop()
-                elif f1=='>':
-                    print('f1>i的操作符:',i)
-                    b=OPND.pop()                #取操作数前两个元素与操作符栈顶元素进行相应运算。
-                    a=OPND.pop()
-                    theta=OPTR.pop()
-                    print("a,b,thata:",a,b,theta)
-                    r1=Operate(a,theta,b)        
-                    OPND.push(r1) 
-                    f2=Precede(OPTR.peek(),i)
-                    if f2=='<':
-                        print('进栈的操作符<:',i)
-                        OPTR.push(i)
-                    elif f2=='=':
-                        OPTR.pop()
-                    elif f1=='>':
-                        print('f2>i的操作符:',i)
-                        b=OPND.pop()                #取操作数前两个元素与操作符栈顶元素进行相应运算。
-                        a=OPND.pop()
-                        theta=OPTR.pop()
-                        print("a,b,thata:",a,b,theta)
-                        r2=Operate(a,theta,b)        
-                        OPND.push(r2) 
-                    
-        elif i=='#':
-            while OPTR.peek()!='#':
-                b=OPND.pop()                #取操作数前两个元素与操作符栈顶元素进行相应运算。
-                a=OPND.pop()
-                theta=OPTR.pop()
-                print("a,b,thata:",a,b,theta)
-                r=Operate(a,theta,b)        
-                OPND.push(r) 
-            
-            
-        
-                
-    print('操作数栈的内容是：',OPND.content())
-    print('操作符栈的内容是：',OPTR.content())
-    #3+9*2-4/2#
+    string=input('请输入要计算的表达式,一定要以"#"结尾：\n')   #3*(7-2)#   3+9*2-4/2#
+    result=calculate(string,OPND,OPTR)
+    print('最终计算结果为：',result)
+    print('最终操作数栈的结果：',OPND.content())
+    
